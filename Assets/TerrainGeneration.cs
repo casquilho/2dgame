@@ -15,7 +15,7 @@ public class TerrainGeneration : MonoBehaviour
     public GameObject Stone;
 
     public float heightpoint;
-    public float heightpoint2;
+    public float heightpoint2; 
 
 
     // Use this for initialization
