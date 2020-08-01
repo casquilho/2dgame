@@ -13,9 +13,12 @@ public class TerrainGeneration : MonoBehaviour
     public GameObject Grass;
     public GameObject Dirt;
     public GameObject Stone;
+    public GameObject player;
 
     public float heightpoint;
-    public float heightpoint2; 
+    public float heightpoint2;
+    private int playerY;
+    private int tunelHeight;
 
 
     // Use this for initialization
@@ -29,8 +32,10 @@ public class TerrainGeneration : MonoBehaviour
 
     void Generation()
     {
-        distance = height;
-        for (int w = 0; w < width; w++)
+        makeWallAtX(0);
+        distance = height / 2;
+
+        for (int w = 1; w < width; w++)
         {
            
             int lowernum = distance - 1;
@@ -39,33 +44,54 @@ public class TerrainGeneration : MonoBehaviour
             space = Random.Range(12, 20);
             int stonespace = distance - space;
 
-
+            //floor
             for (int j = 0; j < stonespace; j++)
             {
-                Instantiate(Stone, new Vector3(w, j), Quaternion.identity);
+                Instantiate(Stone, new Vector3(w, j), Quaternion.identity).transform.parent = gameObject.transform;
             }
 
             for (int j = stonespace; j < distance; j++)
             {
-                Instantiate(Dirt, new Vector3(w, j), Quaternion.identity);
+                Instantiate(Dirt, new Vector3(w, j), Quaternion.identity).transform.parent = gameObject.transform;
             }
-            Instantiate(Grass, new Vector3(w, distance), Quaternion.identity);
-
-
-
-
-
-            int i = 0;
-            for (i = distance +10 ; i < distance + 10 + stonespace; i++)
-            {
-                Instantiate(Stone, new Vector3(w, i), Quaternion.identity);
-            }
-
-            for (int j = i; j < i+stonespace; j++)
-            {
-                Instantiate(Dirt, new Vector3(w, j), Quaternion.identity);
-            }
+            Instantiate(Grass, new Vector3(w, distance), Quaternion.identity).transform.parent = gameObject.transform;
             
+            if (w == 3)
+                playerY = distance + 1;
+
+            //Determine tunelHight
+
+
+
+
+            //Ceilling
+            int i = 0;
+            //if( distance + tunelHeight > height)
+
+
+            for (i = distance +10 ; i < Mathf.Min(distance + 10 + stonespace, height) ; i++)
+            {
+                Instantiate(Stone, new Vector3(w, i), Quaternion.identity).transform.parent = gameObject.transform; ;
+            }
+
+            for (int j = i; j < height; j++)
+            {
+                Instantiate(Dirt, new Vector3(w, j), Quaternion.identity).transform.parent = gameObject.transform; ;
+
+            }
+
+        }
+        makeWallAtX(width);
+
+        Instantiate(player, new Vector3(3, playerY, 0), Quaternion.identity);
+    } 
+    private void makeWallAtX(int x)
+    {
+        for (int j = 0; j < height; j++)
+        {
+            Instantiate(Stone, new Vector3(x, j), Quaternion.identity).transform.parent = gameObject.transform;
+            
+
         }
     }
 }

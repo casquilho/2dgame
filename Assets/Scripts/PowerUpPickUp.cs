@@ -21,8 +21,8 @@ public class PowerUpPickUp : MonoBehaviour
     void OnPlayerEnter(PlayerController2D player)
     {
         switch (gameObject.name) { 
-            case "Run": player.runSpeed = 5; break;
-            case "DoubleJump": player.canDoubleJump = true; break;
+            case "%Run%": player.runSpeed = 5;  break;
+            case "%DoubleJump%": player.canDoubleJump = true;     break;
             default: Debug.Log("default"); break;
         }
         Destroy(gameObject);

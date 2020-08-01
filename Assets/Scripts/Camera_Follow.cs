@@ -16,6 +16,7 @@ public class Camera_Follow : MonoBehaviour
     void Start()
     {
         //rb = player.gameObject.GetComponent<Rigidbody2D>();
+        player = GameObject.Find("Player(Clone)").transform;
 
     }
 

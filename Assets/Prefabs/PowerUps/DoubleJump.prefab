@@ -20,7 +20,7 @@ PrefabInstance:
     - target: {fileID: 5197707759975707698, guid: df14e035976f3a94ba58a66e2791f240,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 8.34668
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5197707759975707698, guid: df14e035976f3a94ba58a66e2791f240,
         type: 3}
@@ -66,6 +66,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: DoubleJump
+      objectReference: {fileID: 0}
+    - target: {fileID: 5197707759975707699, guid: df14e035976f3a94ba58a66e2791f240,
+        type: 3}
+      propertyPath: m_TagString
+      value: PowerUp
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: df14e035976f3a94ba58a66e2791f240, type: 3}
