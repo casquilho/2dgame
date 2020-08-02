@@ -5,6 +5,8 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class PowerUpPickUp : MonoBehaviour
 {
+
+    public int speedModifier;
     // Start is called before the first frame update
     void Awake()
     {
@@ -21,8 +23,8 @@ public class PowerUpPickUp : MonoBehaviour
     void OnPlayerEnter(PlayerController2D player)
     {
         switch (gameObject.name) { 
-            case "%Run%": player.runSpeed = 5;  break;
-            case "%DoubleJump%": player.canDoubleJump = true;     break;
+            case "Run(Clone)": player.runSpeed += speedModifier;  break;
+            case "DoubleJump(Clone)": player.canDoubleJump = true;     break;
             default: Debug.Log("default"); break;
         }
         Destroy(gameObject);

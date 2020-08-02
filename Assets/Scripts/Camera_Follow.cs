@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Camera_Follow : MonoBehaviour
 {
-    public Transform player;
+    private Transform player;
     //private Rigidbody2D rb;
     
     public int zOffSet = 5;
@@ -16,14 +16,18 @@ public class Camera_Follow : MonoBehaviour
     void Start()
     {
         //rb = player.gameObject.GetComponent<Rigidbody2D>();
-        player = GameObject.Find("Player(Clone)").transform;
 
+        //while((player = GameObject.Find("Player(Clone)").transform) == null);
+        player = GameObject.Find("Player(Clone)").transform;
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+        
         transform.position = new Vector3(player.position.x - xOffSet, player.position.y - yOffSet, player.position.z - zOffSet);
+
+
         /*if(rb.velocity.x >= 0)
             currentView.position = new Vector3(player.position.x - xOffSet, player.position.y - yOffSet, player.position.z - zOffSet);
         
