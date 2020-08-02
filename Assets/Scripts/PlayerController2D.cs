@@ -8,19 +8,26 @@ public class PlayerController2D : MonoBehaviour
     Rigidbody2D rb;
     SpriteRenderer spriteRenderer;
 
-    public bool isGrounded;
-    public bool isGroundedL;
-    public bool isGroundedR;
+    
+    public bool isGrounded_L;
+    public bool isGrounded_R;
+    public bool isGrounded_C;
+    public bool isGrounded_CL;
+    public bool isGrounded_CR;
 
     [SerializeField]
-    Transform groundCheck;
+    Transform groundCheck_C;
     [SerializeField]
-    Transform groundCheckL;
+    Transform groundCheck_CL;
     [SerializeField]
-    Transform groundCheckR;
+    Transform groundCheck_CR;
+    [SerializeField]
+    Transform groundCheck_L;
+    [SerializeField]
+    Transform groundCheck_R;
 
-    public float runSpeed = 1.5f;
-    public float jumpSpeed = 3;
+    public float runSpeed;
+    public float jumpSpeed;
     
     public float ySpeed;
   
@@ -39,17 +46,25 @@ public class PlayerController2D : MonoBehaviour
     private void FixedUpdate()
     {
         
-        if (Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("Ground"))) 
-             isGrounded = true;
-        else isGrounded = false;
+        if (Physics2D.Linecast(transform.position, groundCheck_C.position, 1 << LayerMask.NameToLayer("Ground"))) 
+             isGrounded_C= true;
+        else isGrounded_C = false;
 
-        if (Physics2D.Linecast(transform.position, groundCheckL.position, 1 << LayerMask.NameToLayer("Ground")))
-            isGroundedL = true;
-        else isGroundedL = false;
+        if (Physics2D.Linecast(transform.position, groundCheck_CL.position, 1 << LayerMask.NameToLayer("Ground")))
+            isGrounded_CL = true;
+        else isGrounded_CL = false;
+        
+        if (Physics2D.Linecast(transform.position, groundCheck_CR.position, 1 << LayerMask.NameToLayer("Ground")))
+            isGrounded_CR = true;
+        else isGrounded_CR = false;
 
-        if (Physics2D.Linecast(transform.position, groundCheckR.position, 1 << LayerMask.NameToLayer("Ground")))
-            isGroundedR = true;
-        else isGroundedR = false;
+        if (Physics2D.Linecast(transform.position, groundCheck_L.position, 1 << LayerMask.NameToLayer("Ground")))
+            isGrounded_L = true;
+        else isGrounded_L = false;
+
+        if (Physics2D.Linecast(transform.position, groundCheck_R.position, 1 << LayerMask.NameToLayer("Ground")))
+            isGrounded_R = true;
+        else isGrounded_R = false;
 
         ySpeed = rb.velocity.y;
         if (hasJetPack)
@@ -58,96 +73,20 @@ public class PlayerController2D : MonoBehaviour
         }
         else {
             //IS ON THE GROUND
-            if (isGrounded || isGroundedL || isGroundedR)
+            if (isGrounded_C && (isGrounded_L || isGrounded_R))
             {
-                if (canDoubleJump)
-                    doubleJump = true;
-
-                if (Input.GetKey("d") || Input.GetKey("right"))
-                {
-                    if (Input.GetKeyDown("space"))
-                    {
-                        rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
-                        animator.Play("jump_animation");
-                    }
-                    else
-                    {
-                        rb.velocity = new Vector2(runSpeed, rb.velocity.y);
-                        animator.Play("animation_run");
-                        spriteRenderer.flipX = false;
-                    }
-                }
-                else
-                if (Input.GetKey("a") || Input.GetKey("left"))
-                {
-                    if (Input.GetKeyDown("space"))
-                    {
-                        rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
-                        animator.Play("jump_animation");
-                    }
-                    else {
-                        rb.velocity = new Vector2(-runSpeed, rb.velocity.y);
-                        animator.Play("animation_run");
-                        spriteRenderer.flipX = true;
-                    }
-                }
-                else
-                if (Input.GetKeyDown("space"))
-                {
-                    rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
-                    animator.Play("jump_animation");
-                }
-                else
-                {
-                    animator.Play("animation_idle");
-                    rb.velocity = new Vector2(0, rb.velocity.y);
-                }
-
+                OnGroundMovement();
+            }
+            else
+            //IS ON THE WALL
+            if(!isGrounded_C && (isGrounded_L || isGrounded_R))
+            {
+                OnWallMovement();
             }
             //IS ON THE AIR
             else
             {
-                if (rb.velocity.y < 0)
-                    animator.Play("fall_animation");
-                else
-                    animator.Play("jump_animation");
-
-
-                if (Input.GetKey("d") || Input.GetKey("right"))
-                {
-                    if (Input.GetKeyDown("space") && (rb.velocity.y < jumpSpeed / 2) && doubleJump)
-                    {
-                        rb.velocity = new Vector2(rb.velocity.x, jumpSpeed * .7f);
-                        animator.Play("jump_animation");
-                        doubleJump = false;
-                    }
-                    else
-                        rb.velocity = new Vector2(runSpeed, rb.velocity.y);
-                    spriteRenderer.flipX = false;
-                }
-                else
-                if (Input.GetKey("a") || Input.GetKey("left"))
-                {
-                    if (Input.GetKey("space") && (rb.velocity.y < jumpSpeed / 2) && doubleJump)
-                    {
-                        rb.velocity = new Vector2(rb.velocity.x, jumpSpeed * .7f);
-                        animator.Play("jump_animation");
-                        doubleJump = false;
-                    }
-                    else
-                        rb.velocity = new Vector2(-runSpeed, rb.velocity.y);
-                    spriteRenderer.flipX = true;
-                }
-                else
-                if (Input.GetKey("space") && (rb.velocity.y < jumpSpeed / 2) && doubleJump)
-                {
-                    rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
-                    animator.Play("jump_animation");
-                    doubleJump = false;
-                }
-                else
-                    rb.velocity = new Vector2(0, rb.velocity.y);
-
+                OnAirMovement();
             }
         }
         
@@ -181,6 +120,137 @@ public class PlayerController2D : MonoBehaviour
             rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
             animator.Play("jump_animation");
         }*/
+    }
+
+    private void OnAirMovement()
+    {
+        if (rb.velocity.y < 0)
+            animator.Play("fall_animation");
+        else
+            animator.Play("jump_animation");
+
+
+        if (Input.GetKey("d") || Input.GetKey("right"))
+        {
+            if (Input.GetKey("space") && (rb.velocity.y < jumpSpeed / 2) && doubleJump)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, jumpSpeed * .7f);
+                animator.Play("jump_animation");
+                doubleJump = false;
+            }
+            else
+                rb.velocity = new Vector2(runSpeed, rb.velocity.y);
+            spriteRenderer.flipX = false;
+        }
+        else
+        if (Input.GetKey("a") || Input.GetKey("left"))
+        {
+            if (Input.GetKey("space") && (rb.velocity.y < jumpSpeed / 2) && doubleJump)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, jumpSpeed * .7f);
+                animator.Play("jump_animation");
+                doubleJump = false;
+            }
+            else
+                rb.velocity = new Vector2(-runSpeed, rb.velocity.y);
+            spriteRenderer.flipX = true;
+        }
+        else
+        if (Input.GetKey("space") && (rb.velocity.y < jumpSpeed / 2) && doubleJump)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
+            animator.Play("jump_animation");
+            doubleJump = false;
+        }
+        else
+            rb.velocity = new Vector2(0, rb.velocity.y);
+    }
+    private void OnGroundMovement()
+    {
+        if (canDoubleJump)
+            doubleJump = true;
+
+        if (Input.GetKey("d") || Input.GetKey("right"))
+        {
+            if (Input.GetKey("space"))
+            {
+                rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
+                animator.Play("jump_animation");
+            }
+            else
+            {
+                rb.velocity = new Vector2(runSpeed, rb.velocity.y);
+                animator.Play("animation_run");
+                spriteRenderer.flipX = false;
+            }
+        }
+        else
+        if (Input.GetKey("a") || Input.GetKey("left"))
+        {
+            if (Input.GetKey("space"))
+            {
+                rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
+                animator.Play("jump_animation");
+            }
+            else
+            {
+                rb.velocity = new Vector2(-runSpeed, rb.velocity.y);
+                animator.Play("animation_run");
+                spriteRenderer.flipX = true;
+            }
+        }
+        else
+        if (Input.GetKey("space"))
+        {
+            rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
+            animator.Play("jump_animation");
+        }
+        else
+        {
+            animator.Play("animation_idle");
+            rb.velocity = new Vector2(0, rb.velocity.y);
+        }
+    }
+
+    private void OnWallMovement()
+    {
+        if (Input.GetKey("d") || Input.GetKey("right"))
+        {
+            if (Input.GetKey("space") && (rb.velocity.y < jumpSpeed / 2) && doubleJump)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, jumpSpeed * .7f);
+                animator.Play("jump_animation");
+                doubleJump = false;
+            }
+            else
+            {
+                if (rb.velocity.y == 0)
+                    rb.velocity = new Vector2(runSpeed, -jumpSpeed);     //alterar este -jumpSpeed para aceleraçao da gravidade ( aka, cair como se estivesse no ar normalmente)
+                else
+                    rb.velocity = new Vector2(runSpeed, rb.velocity.y); 
+                animator.Play("fall_animation");
+            }
+            spriteRenderer.flipX = false;
+        }
+        else
+        if (Input.GetKey("a") || Input.GetKey("left"))
+        {
+            if (Input.GetKey("space") && (rb.velocity.y < jumpSpeed / 2) && doubleJump)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, jumpSpeed * .7f);
+                animator.Play("jump_animation");
+                doubleJump = false;
+            }
+            else
+            {
+                if (rb.velocity.y == 0)// -jumpSpeed
+                    rb.velocity = new Vector2(-runSpeed, -jumpSpeed);   //alterar este -jumpSpeed para aceleraçao da gravidade ( aka, cair como se estivesse no ar normalmente)
+                else
+                    rb.velocity = new Vector2(-runSpeed, rb.velocity.y);
+                animator.Play("fall_animation");
+            }
+            spriteRenderer.flipX = true;
+        }
     }
     private void JetPackMovement()
     {

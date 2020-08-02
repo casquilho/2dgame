@@ -2,19 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MouseTracking : MonoBehaviour
+public class CrossHair : MonoBehaviour
 {
-    public Vector3 mousePos;
-    public GameObject crosshair;
     // Start is called before the first frame update
     void Start()
     {
-        
+        Cursor.visible = false;
     }
 
     // Update is called once per frame
-    void LateUpdate()
+    void Update()
     {
-        mousePos = Input.mousePosition;
+        this.transform.position = Input.mousePosition;
     }
 }

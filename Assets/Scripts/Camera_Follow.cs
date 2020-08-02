@@ -17,8 +17,13 @@ public class Camera_Follow : MonoBehaviour
     {
         //rb = player.gameObject.GetComponent<Rigidbody2D>();
 
-        //while((player = GameObject.Find("Player(Clone)").transform) == null);
-        player = GameObject.Find("Player(Clone)").transform;
+        while((player = GameObject.Find("Player(Clone)").transform) == null)
+        {
+            player = GameObject.Find("Player(Clone)").transform;
+        }
+        
+
+
     }
 
     // Update is called once per frame
